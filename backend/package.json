@@ -1,22 +1,19 @@
 {
-  "name": "backend",
-  "version": "0.0.0",
-  "private": true,
+  "name": "student-ml-backend",
+  "type": "module",
   "scripts": {
-    "start": "node ./bin/www",
-    "dev": "nodemon ./bin/www"
+    "dev": "nodemon server.js",
+    "start": "node server.js"
   },
   "dependencies": {
-    "cookie-parser": "~1.4.4",
-    "debug": "~2.6.9",
-    "dotenv": "^17.2.3",
-    "express": "~4.16.1",
-    "express-rate-limit": "^8.1.0",
-    "http-errors": "~1.6.3",
-    "jade": "~1.11.0",
-    "morgan": "~1.9.1"
+    "axios": "^1.7.7",
+    "cors": "^2.8.5",
+    "dotenv": "^16.4.5",
+    "express": "^4.19.2",
+    "helmet": "^7.1.0",
+    "morgan": "^1.10.0"
   },
   "devDependencies": {
-    "nodemon": "^3.1.10"
+    "nodemon": "^3.1.7"
   }
 }

@@ -102,7 +102,7 @@ function normalize(records) {
   })
 }
 
-export default function CsvUpload() {
+export default function Upload() {
   const { data, loadRows, source } = useDataset()
   const [preview, setPreview] = useState([]) // normalized preview
   const [page, setPage] = useState(1)
@@ -156,6 +156,7 @@ export default function CsvUpload() {
             accept=".csv,text/csv"
             onChange={onFile}
             className="block text-sm border-2 border-slate-500 w-49 rounded-xl px-3 py-1.5 cursor-pointer"
+            placeholder='choose'
           />
           <span className="text-xs opacity-80">
             Current data source: <b>{source === 'csv' ? 'Your CSV' : 'Sample dataset'}</b>

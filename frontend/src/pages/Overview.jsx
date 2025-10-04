@@ -64,7 +64,7 @@ export default function Overview(){
             <p className="text-sm opacity-90 mt-1">
               Go to <b>Upload CSV</b> and add your student list to unlock the overview and insights.
             </p>
-            <div className="mt-4 flex items-center justify-center gap-2">
+            {/* <div className="mt-4 flex items-center justify-center gap-2">
               <Link
                 to="/upload"
                 className="px-3 py-2 rounded font-medium"
@@ -73,7 +73,7 @@ export default function Overview(){
                 Go to Upload CSV
               </Link>
               <span className="text-xs opacity-70">Accepted: .csv (UTF-8)</span>
-            </div>
+            </div> */}
             <ul className="text-xs opacity-80 mt-5 space-y-1 max-w-xl mx-auto text-left">
               <li>• Required columns: <b>name, attendance, hours, prev</b> (optional: <b>final, parent, online, activities</b>).</li>
               <li>• Attendance should be a fraction (e.g., 0.86). We convert it to % automatically.</li>
