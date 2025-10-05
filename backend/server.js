@@ -1,23 +1,76 @@
-import "dotenv/config.js";
+// server.js (Node/Express on 5050)
 import express from "express";
 import cors from "cors";
-import helmet from "helmet";
 import morgan from "morgan";
-import mlRoutes from "./routes/ml.js";
+import axios from "axios";
+import "dotenv/config";
 
 const app = express();
-const PORT = process.env.PORT || 5050;
 
-app.use(helmet());
-app.use(express.json({ limit: "2mb" }));
-app.use(cors({ origin: process.env.CORS_ORIGIN || "http://localhost:5173" }));
+// --- config ---
+const PORT = process.env.PORT || 5050;
+const FASTAPI_URL = process.env.FASTAPI_URL || "http://127.0.0.1:8000"; // ensure this matches uvicorn
+
+// --- middleware ---
+app.use(cors({
+  origin: ["http://localhost:5173", "http://127.0.0.1:5173"],
+  credentials: true,
+}));
+app.use(express.json({ limit: "1mb" }));
 app.use(morgan("dev"));
 
-app.get("/", (_req, res) => res.json({ ok: true, service: "node-api" }));
+// --- health ---
+app.get("/", (_req, res) => {
+  res.json({ status: "ok", gateway: "node-5050", upstream: FASTAPI_URL });
+});
 
-// 👇 This line MUST exist (and path/case must be correct)
-app.use("/api", mlRoutes);
+// --- proxy routes ---
+// NOTE: We rewrite '/api/predict' -> '/predict' for FastAPI
+app.post("/api/predict", async (req, res) => {
+  try {
+    const { data } = await axios.post(`${FASTAPI_URL}/predict`, req.body, {
+      timeout: 10000, // 10s
+      headers: { "Content-Type": "application/json" },
+    });
+    res.json(data);
+  } catch (err) {
+    const status = err.response?.status || 502;
+    const detail = err.response?.data || err.message || "Upstream error";
+    console.error("Proxy /api/predict error:", detail);
+    res.status(502).json({ error: "Bad Gateway", detail });
+  }
+});
+
+app.post("/api/classify", async (req, res) => {
+  try {
+    const { data } = await axios.post(`${FASTAPI_URL}/classify`, req.body, {
+      timeout: 10000,
+      headers: { "Content-Type": "application/json" },
+    });
+    res.json(data);
+  } catch (err) {
+    const status = err.response?.status || 502;
+    const detail = err.response?.data || err.message || "Upstream error";
+    console.error("Proxy /api/classify error:", detail);
+    res.status(502).json({ error: "Bad Gateway", detail });
+  }
+});
+
+app.post("/api/cluster", async (req, res) => {
+  try {
+    const { data } = await axios.post(`${FASTAPI_URL}/cluster`, req.body, {
+      timeout: 10000,
+      headers: { "Content-Type": "application/json" },
+    });
+    res.json(data);
+  } catch (err) {
+    const status = err.response?.status || 502;
+    const detail = err.response?.data || err.message || "Upstream error";
+    console.error("Proxy /api/cluster error:", detail);
+    res.status(502).json({ error: "Bad Gateway", detail });
+  }
+});
 
 app.listen(PORT, () => {
-  console.log(`Node API on http://localhost:${PORT}`);
+  console.log(`Gateway listening http://localhost:${PORT} → upstream ${FASTAPI_URL}`);
 });
